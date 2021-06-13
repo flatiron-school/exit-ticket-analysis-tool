@@ -1,5 +1,8 @@
 import streamlit as st
 import datetime
+
+import matplotlib.pyplot as plt
+
 import data_loader
 
 
@@ -43,8 +46,23 @@ st.write('Full Data')
 st.dataframe(df)
 
 # Get a subset (based on filtering)
-st.write('Filtered Data for  {}'.format(selectbox_student))
-df_subset = df[df['name']==selectbox_student]
-# Display
-cols = ['name','section','submitted','n correct','n incorrect']
-st.dataframe(df_subset[cols].sort_values(by=['name','submitted']))
+def display_student_data(student_name, sort_by=['name','submitted'],
+    cols=['name','section','submitted','n correct','n incorrect']):
+    st.write('Filtered Data for  {}'.format(student_name))
+
+    # Filter by student and sort by date
+    df_subset = df[df['name']==student_name].sort_values(by=sort_by)
+
+    df_to_display  = df_subset[cols]
+    st.dataframe(df_to_display)
+
+    #  Chart
+    f, ax = plt.subplots()
+    total_percent = df_subset['n correct'] / (df_subset['n correct'] + df_subset['n incorrect'])
+    ax.plot(df_subset['submitted'],total_percent)
+    ax.set_ylabel('Percent Correct')
+    plt.gcf().autofmt_xdate()
+
+    st.pyplot(f)
+
+display_student_data(selectbox_student)
