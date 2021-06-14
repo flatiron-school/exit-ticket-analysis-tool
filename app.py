@@ -56,13 +56,19 @@ def display_student_data(student_name, sort_by=['name','submitted'],
     df_to_display  = df_subset[cols]
     st.dataframe(df_to_display)
 
-    #  Chart
-    f, ax = plt.subplots()
+    # Display Visuals
+    f, (ax_feedback, ax_percent) = plt.subplots(ncols=2)
+    # Line Plot - Percent Correct
+    # Note: May need to adjust since feedback is also "graded"
     total_percent = df_subset['n correct'] / (df_subset['n correct'] + df_subset['n incorrect'])
-    ax.plot(df_subset['submitted'],total_percent)
-    ax.set_ylabel('Percent Correct')
+    ax_percent.plot(df_subset['lecture'], total_percent)
+    ax_percent.set_ylabel('Percent Correct')
+    ax_percent.set_ylim(0,1)
     plt.gcf().autofmt_xdate()
-
+    # Bar Chart - Feedback
+    df_subset['This lecture was..._other'].value_counts().plot(kind='bar', rot=40, ax=ax_feedback)
+    # ax_feedback =  df_subset.hist('This lecture was...', ax=ax_feedback)
+    f.tight_layout()
     st.pyplot(f)
 
 display_student_data(selectbox_student)
