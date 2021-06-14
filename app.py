@@ -56,8 +56,15 @@ def display_student_data(student_name, sort_by=['name','submitted'],
     df_to_display  = df_subset[cols]
     st.dataframe(df_to_display)
 
+    # Bar Chart - Feedback
+    f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True)
+    df_subset['This lecture was...'].value_counts().plot(kind='bar', rot=40, ax=ax_engage)
+    df_subset['This lecture was..._other'].value_counts().plot(kind='bar', rot=40, ax=ax_learn)
+    f.tight_layout()
+    st.pyplot(f)
+
     # Display Visuals
-    f, (ax_feedback, ax_percent) = plt.subplots(ncols=2)
+    f, ax_percent = plt.subplots()
     # Line Plot - Percent Correct
     # Note: May need to adjust since feedback is also "graded"
     total_percent = df_subset['n correct'] / (df_subset['n correct'] + df_subset['n incorrect'])
@@ -65,9 +72,6 @@ def display_student_data(student_name, sort_by=['name','submitted'],
     ax_percent.set_ylabel('Percent Correct')
     ax_percent.set_ylim(0,1)
     plt.gcf().autofmt_xdate()
-    # Bar Chart - Feedback
-    df_subset['This lecture was..._other'].value_counts().plot(kind='bar', rot=40, ax=ax_feedback)
-    # ax_feedback =  df_subset.hist('This lecture was...', ax=ax_feedback)
     f.tight_layout()
     st.pyplot(f)
 
