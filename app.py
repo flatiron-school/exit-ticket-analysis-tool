@@ -47,7 +47,7 @@ st.dataframe(df)
 
 # Get a subset (based on filtering)
 def display_student_data(student_name, sort_by=['name','submitted'],
-    cols=['name','section','submitted','n correct','n incorrect']):
+    cols=['name','section','phase','cohort','lecture','submitted','n correct','n incorrect']):
     st.write('Filtered Data for  {}'.format(student_name))
 
     # Filter by student and sort by date

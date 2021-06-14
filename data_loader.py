@@ -3,12 +3,29 @@ import numpy as np
 import glob
 import os
 
+# Add extra information into Exit Ticket Response
+def add_info_to_df(df, cohort=None, phase=None, lecture=None):
+    df['cohort'] = cohort
+    df['phase'] = phase
+    df['lecture'] = lecture
+    return df
 
+# Find CSVs by nested directories
 def load_csvs():
     path = 'data'
-    all_files = glob.glob(os.path.join(path, "*.csv"))
-
-    df_from_each_file = (pd.read_csv(f) for f in all_files)
+    # Form of 'data/COHORT/Phase#/*csv'
+    all_files = cohorts = glob.glob(os.path.join(path, '*', 'Phase*/', '*.csv'))
+    
+    df_from_each_file = (
+        add_info_to_df(
+            pd.read_csv(f),
+            # Use path to get extra info
+            cohort=f.split('/')[1],
+            phase=f.split('/')[2],
+            lecture=f.split('/')[3].split('Exit Ticket')[0] # Keep only lecture info
+        ) 
+        for f in all_files
+    )
     concatenated_df   = pd.concat(df_from_each_file, ignore_index=True)
     return concatenated_df
 
