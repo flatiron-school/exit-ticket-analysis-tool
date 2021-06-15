@@ -51,9 +51,9 @@ def get_student_names(data, column_name='name'):
     return np.sort(names)
     
 
-def get_cohorts():
-    # TODO: Load for DB
-    return ['Washington D.C.', 'San Francisco']
+def get_cohorts(data):
+    # Load from DB
+    return data['cohort'].unique()
 
 def get_phases():
     # Could pull from DB
