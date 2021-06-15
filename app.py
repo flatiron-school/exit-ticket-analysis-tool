@@ -101,13 +101,15 @@ if 'Phases' in filters:
 
     df_to_display  = df_subset[cols]
     st.dataframe(df_to_display)
-
-    # Bar Chart - Feedback
-    f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
-    df_subset.groupby('This lecture was...')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=True)
-    df_subset.groupby('This lecture was..._other')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=True)
-    f.tight_layout()
-    st.pyplot(f)
+    try:
+        # Bar Chart - Feedback
+        f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
+        df_subset.groupby('This lecture was...')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=True)
+        df_subset.groupby('This lecture was..._other')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=True)
+        f.tight_layout()
+        st.pyplot(f)
+    except:
+        st.write(f"Couldn't filter for {selectbox_phase}; could be no data here")
 
 if 'Students' in filters:
     display_student_data(selectbox_student)
