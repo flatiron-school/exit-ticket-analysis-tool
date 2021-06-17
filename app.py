@@ -11,20 +11,29 @@ df = data_loader.load_csvs()
 
 
 # Use the data to allow for filtering in sidebar
-selectbox_cohort = st.sidebar.selectbox(
-    'Cohort?',
-    data_loader.get_cohorts()
+filters = st.sidebar.multiselect(
+            'Filter by what?',
+            ['Students', 'Cohorts', 'Phases'],
+            ['Students']
 )
 
-selectbox_phase = st.sidebar.selectbox(
-    'Phase?',
-    data_loader.get_phases()
-)
+if 'Cohorts' in filters:
+    selectbox_cohort = st.sidebar.selectbox(
+        'Cohort?',
+        data_loader.get_cohorts(df)
+    )
 
-selectbox_student = st.sidebar.selectbox(
-    'Student?',
-    data_loader.get_student_names(df)
-)
+if 'Phases' in filters:
+    selectbox_phase = st.sidebar.selectbox(
+        'Phase?',
+        data_loader.get_phases()
+    )
+
+if 'Students' in filters:
+    selectbox_student = st.sidebar.selectbox(
+        'Student?',
+        data_loader.get_student_names(df)
+    )
 
 # Choose the date range for feedback
 date_range = st.sidebar.date_input(
@@ -61,7 +70,7 @@ def display_student_data(student_name, sort_by=['name','submitted'],
     st.dataframe(df_to_display)
 
     # Bar Chart - Feedback
-    f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True)
+    f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
     df_subset['This lecture was...'].value_counts().plot(kind='bar', rot=40, ax=ax_engage)
     df_subset['This lecture was..._other'].value_counts().plot(kind='bar', rot=40, ax=ax_learn)
     f.tight_layout()
@@ -79,4 +88,52 @@ def display_student_data(student_name, sort_by=['name','submitted'],
     f.tight_layout()
     st.pyplot(f)
 
-display_student_data(selectbox_student)
+if 'Cohorts' in filters:
+    st.write('Filtered for {}'.format(selectbox_cohort))
+
+    sort_by=['phase']
+    cols=['name','section','phase','cohort','lecture','submitted','n correct','n incorrect','This lecture was...','This lecture was..._other',
+    'What did you like best about this lecture?',
+    'Do you have any thoughts about how this lecture might be improved?',
+    'Is there any other feedback you have about this lecture?']
+    # Filter by phase and sort by date
+    df_subset = df[df['cohort']==selectbox_cohort].sort_values(by=sort_by)
+
+    df_to_display  = df_subset[cols]
+    st.dataframe(df_to_display)
+    try:
+        # Bar Chart - Feedback
+        f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
+        df_subset.groupby('This lecture was...')['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=True)
+        df_subset.groupby('This lecture was..._other')['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=True)
+        f.tight_layout()
+        st.pyplot(f)
+    except:
+        st.write(f"Couldn't filter for {selectbox_phase}; could be no data here")
+
+if 'Phases' in filters:
+    st.write('Filtered for {}'.format(selectbox_phase))
+
+    sort_by=['cohort']
+    cols=['name','section','phase','cohort','lecture','submitted','n correct','n incorrect','This lecture was...','This lecture was..._other',
+    'What did you like best about this lecture?',
+    'Do you have any thoughts about how this lecture might be improved?',
+    'Is there any other feedback you have about this lecture?']
+    # Filter by phase and sort by date
+    df_subset = df[df['phase']==selectbox_phase.replace(' ','')].sort_values(by=sort_by)
+
+    df_to_display  = df_subset[cols]
+    st.dataframe(df_to_display)
+    try:
+        # Bar Chart - Feedback
+        f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
+        df_subset.groupby('This lecture was...')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=True)
+        df_subset.groupby('This lecture was..._other')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=True)
+        f.tight_layout()
+        st.pyplot(f)
+    except:
+        st.write(f"Couldn't filter for {selectbox_phase}; could be no data here")
+
+if 'Students' in filters:
+    display_student_data(selectbox_student)
+
