@@ -44,11 +44,11 @@ date_range = st.sidebar.date_input(
 
 
 
-# Add a slider to the sidebar:
-add_slider = st.sidebar.slider(
-    'Select a range of values',
-    0.0, 100.0, (25.0, 75.0)
-)
+# # Add a slider to the sidebar:
+# add_slider = st.sidebar.slider(
+#     'Select a range of values',
+#     0.0, 100.0, (25.0, 75.0)
+# )
 
 # Display Data
 st.write('Full Data')
@@ -71,8 +71,8 @@ def display_student_data(student_name, sort_by=['name','submitted'],
 
     # Bar Chart - Feedback
     f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
-    df_subset['This lecture was...'].value_counts().plot(kind='bar', rot=40, ax=ax_engage)
-    df_subset['This lecture was..._other'].value_counts().plot(kind='bar', rot=40, ax=ax_learn)
+    df_subset.groupby(['This lecture was...'])['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage)
+    df_subset.groupby(['This lecture was..._other'])['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn)
     f.tight_layout()
     st.pyplot(f)
 
@@ -104,8 +104,8 @@ if 'Cohorts' in filters:
     try:
         # Bar Chart - Feedback
         f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
-        df_subset.groupby('This lecture was...')['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=True)
-        df_subset.groupby('This lecture was..._other')['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=True)
+        df_subset.groupby('This lecture was...')['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=False)
+        df_subset.groupby('This lecture was..._other')['phase'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=False)
         f.tight_layout()
         st.pyplot(f)
     except:
@@ -127,8 +127,8 @@ if 'Phases' in filters:
     try:
         # Bar Chart - Feedback
         f, (ax_engage, ax_learn) = plt.subplots(ncols=2, sharey=True, figsize=(10,6))
-        df_subset.groupby('This lecture was...')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=True)
-        df_subset.groupby('This lecture was..._other')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=True)
+        df_subset.groupby('This lecture was...')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_learn, stacked=False)
+        df_subset.groupby('This lecture was..._other')['cohort'].value_counts().unstack().plot(kind='bar', rot=40, ax=ax_engage, stacked=False)
         f.tight_layout()
         st.pyplot(f)
     except:
