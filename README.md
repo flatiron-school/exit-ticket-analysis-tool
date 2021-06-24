@@ -20,3 +20,13 @@ Once the environment has been created with the above command, it can be activate
 ```bash
 conda activate exit_tool_env
 ```
+
+# Usage
+
+To run the tool/app: 
+
+0. First ensure that the `exit_tool_env` environment is activated 
+1. Navigate in the terminal to where the `app.py` file resides
+2. Run the command `streamlit run app.py`
+4. A web address will appear in stdin and a new browswer window will apear with the tool loaded
+5. To quit the app, terminate the job process started in the terminal
