@@ -2,7 +2,16 @@
 
 This tool is to meant to do some quick/basic analysis of Exit Tickets given to students following data science lectures using [Streamlit](https://streamlit.io).
 
+Repo file structure:
 
+```
+exit-ticket-analysis-tool/
+├─ data/
+├─ app.py
+├─ data_loader.py
+├─ exit_tool_env.yml
+```
+> Note the `data` directory must be made by the user and will contain the Exit Ticket data in the form of CSVs. See the [Formatting the Data section](#Formatting%20the%20Data) for details.
 
 # Setup
 
